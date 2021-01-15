@@ -20,3 +20,20 @@ VARIABLE N
 ( -- n j i testmatrix index c! will assign n to index i, j -- )
 ( -- n @ will get the rows of the testmatrix -- )
 ( -- m @ will get the columns of the testmatrix -- )
+
+200 M !
+200 N !
+M @ N @ MATRIX BOARD ( -- This is our main matrix -- )
+M @ N @ MATRIX COUNTBOARD ( -- This is our counting matrix -- )
+
+( -- UPDATING COUNTING BOARD -- )
+
+: CWRAP COLUMNS BOARD @ MOD ;
+: RWRAP ROWS BOARD @ MOD ;
+: R+ 1 + RWRAP ;
+: R- 1 - RWRAP ;
+: C+ SWAP 1 + CWRAP SWAP ;
+: C- SWAP 1 + CWRAP SWAP ;
+: COUNTIJ ( j i -- count ) 0 -ROT 2DUP R+ BOARD c@ 3 ROLL + -ROT 2DUP R- BOARD c@ 3 ROLL + -ROT 2DUP C+ BOARD c@ 3 ROLL + -ROT 2DUP C- BOARD c@ 3 ROLL + -ROT 2DUP R+ C+ BOARD c@ 3 ROLL + -ROT 2DUP R- C- BOARD c@ 3 ROLL + -ROT 2DUP R+ C- BOARD c@ 3 ROLL + -ROT R- C+ BOARD c@ + ;
+: UPDATECB ROWS COUNTBOARD @ 0 DO COLUMNS COUNTBOARD @ 0 DO I J COUNTIJ I J COUNTBOARD c! LOOP LOOP ;
+
