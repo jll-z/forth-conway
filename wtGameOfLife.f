@@ -1,6 +1,6 @@
 ( -- INCLUDING OPTIONS -- )
 INCLUDING-OPTION C:\ForthInc-Evaluation\SWIFTFORTH\LIB\OPTIONS\` rnd.f
-
+INCLUDING-OPTION C:\ForthInc-Evaluation\Projects\GameofLife\` bmpCode.f ( -- This code I shall include in the git -- )
 
 ( -- MATRIX STYLE UTILISING ALLOT -- )
 : ARRAY ( n/mn--- ) DEPTH 1 = IF 1 THEN CREATE 2DUP , , * DUP HERE SWAP 0 FILL ALLOT DOES> ( j i addr -- addr-i,j ) DUP @ 1 = IF 0 SWAP THEN CELL+ DUP @ ROT * + + CELL+ ; ( -- EXTENDING MATRIX DEFINITION TO ALLOW FOR 1D ARRAYS -- )
@@ -48,18 +48,18 @@ VARIABLE GEN
 : RABSORB DUP -1 = SWAP DUP ROWS BOARD @  = OR IF FALSE ELSE TRUE THEN ; ( -- if i = -1 or N produce logical false -- )
 : CABSORB SWAP DUP -1 = SWAP DUP COLUMNS BOARD @ = OR IF SWAP FALSE ELSE SWAP TRUE THEN ; ( -- if j = -1 or M produce logical false -- )
 : WRAP ( j i -- 1/0) RWRAP CWRAP BOARD c@ ; ( -- performs the wrapping for periodic boundaries -- )
-: ABSORB ( j i -- 1/0 ) RABSORB CABSORB AND IF BOARD c@ ELSE 2DROP 0 THEN ; ( -- absorbing case - if the logical true of Rabsorb and Cabsorb results in the board value else 0 )
-: B@ ( j i  -- 1/0 ) BOUNDARIES 0 = IF WRAP ELSE ABSORB THEN ; ( -- uses boundaries variable to check if absorbing or wrapping boundaries are set - if this is ineffecient, could simply replace with the word wrap or absorb dependent on usage )
+: ABSORB ( j i -- 1/0 ) RABSORB CABSORB AND IF BOARD c@ ELSE 2DROP 0 THEN ; 
+: B@ ( j i  -- 1/0 ) BOUNDARIES 0 = IF WRAP ELSE ABSORB THEN ;
 : R+ 1 + ;
 : R- 1 - ;
 : C+ SWAP 1 + SWAP ;
 : C- SWAP 1 - SWAP ;
-: COUNTIJ ( j i -- count ) 0 -ROT 2DUP R+ B@ 3 ROLL + -ROT 2DUP R- B@ 3 ROLL + -ROT 2DUP C+ B@ 3 ROLL + -ROT 2DUP C- B@ 3 ROLL + -ROT 2DUP R+ C+ B@ 3 ROLL + -ROT 2DUP R- C- B@ 3 ROLL + -ROT 2DUP R+ C- B@ 3 ROLL + -ROT R- C+ B@ + ; ( -- Implementing new B@ word -- )
+: COUNTIJ ( j i -- count ) 0 -ROT 2DUP R+ B@ 3 ROLL + -ROT 2DUP R- B@ 3 ROLL + -ROT 2DUP C+ B@ 3 ROLL + -ROT 2DUP C- B@ 3 ROLL + -ROT 2DUP R+ C+ B@ 3 ROLL + -ROT 2DUP R- C- B@ 3 ROLL + -ROT 2DUP R+ C- B@ 3 ROLL + -ROT R- C+ B@ + ; 
 : UPDATECOUNTBOARD ROWS COUNTBOARD @ 0 DO COLUMNS COUNTBOARD @ 0 DO I J COUNTIJ I J COUNTBOARD c! LOOP LOOP ;
 
 ( -- Updating Life Board -- )
 
-: BORN? FALSE SWAP LEN BORNRULES @ 0 DO DUP I BORNRULES c@ = IF SWAP DROP TRUE SWAP THEN LOOP DROP ; ( -- Potentially inefficent implementation, but I need to figure out how to break out of do loops -- )
+: BORN? FALSE SWAP LEN BORNRULES @ 0 DO DUP I BORNRULES c@ = IF SWAP DROP TRUE SWAP THEN LOOP DROP ; 
 : LIVE? FALSE SWAP LEN LIVERULES @ 0 DO DUP I LIVERULES c@ = IF SWAP DROP TRUE SWAP THEN LOOP DROP ;
 : LIVEDIE? 1 = IF LIVE? IF 1 ELSE 0 THEN ELSE BORN? IF 1 ELSE 0 THEN THEN ;
 : UPDATEBOARD ROWS BOARD @ 0 DO COLUMNS BOARD @ 0 DO I J COUNTBOARD c@ I J BOARD c@ LIVEDIE? I J BOARD c! LOOP LOOP ;
@@ -71,6 +71,12 @@ VARIABLE GEN
 
 ( -- DISPLAY CODE -- )
 : ASCIIDISPLAY CR ." GENERATION: " GEN @ . CR ROWS BOARD @ 0 DO CR COLUMNS BOARD @ 0 DO I J BOARD c@ 1 = IF ." *" ELSE ."  " THEN LOOP LOOP ;
+
+: TRANSLATEBMP DUP DUP 2 + SWAP 54 + 0 -ROT DO DUP 0 BOARD c@ 0 = if 255 255 255 ELSE 000 000 000 THEN I TUCK c! 1+ TUCK c! 1+ c! 1 + 3 +LOOP DROP ;
+: BMPDISPLAY bmp-address @ TRANSLATEBMP bmp-address @ bmp-to-screen-stretch ;
+: BMPSETUP M @ bmp-x-size ! N @ bmp-y-size ! Setup-Test-Memory New-bmp-Window-strech bmp-window-handle ! ;
+
+: DISPLAYSETUP BMPSETUP ;
 : DISPLAY ASCIIDISPLAY ;
 
 
@@ -83,7 +89,7 @@ VARIABLE GEN
 ( -- LIFE -- )
 
 
-: SETUP B3L23 ;
+: SETUP B3L23 DISPLAYSETUP ;
 : LIFE 0 SETUP DO DISPLAY UPDATE G+ LOOP :
 
 
