@@ -28,14 +28,20 @@ M @ N @ ARRAY COUNTBOARD ( -- This is our counting matrix -- )
 
 ( -- UPDATING -- )
 ( -- Updating Counting Board -- )
-
-: CWRAP DUP 0 < IF COLUMNS BOARD @ + ELSE COLUMNS BOARD @ MOD THEN ;
+0 CONSTANT BOUNDARIES  ( -- 0 for periodic, 1 for absorbing -- )
+: CWRAP SWAP DUP 0 < IF COLUMNS BOARD @ + ELSE COLUMNS BOARD @ MOD THEN SWAP ;
 : RWRAP DUP 0 < IF ROWS BOARD @ + ELSE ROWS BOARD @ MOD THEN ;
-: R+ 1 + RWRAP ;
-: R- 1 - RWRAP ;
-: C+ SWAP 1 + CWRAP SWAP ;
-: C- SWAP 1 + CWRAP SWAP ;
-: COUNTIJ ( j i -- count ) 0 -ROT 2DUP R+ BOARD c@ 3 ROLL + -ROT 2DUP R- BOARD c@ 3 ROLL + -ROT 2DUP C+ BOARD c@ 3 ROLL + -ROT 2DUP C- BOARD c@ 3 ROLL + -ROT 2DUP R+ C+ BOARD c@ 3 ROLL + -ROT 2DUP R- C- BOARD c@ 3 ROLL + -ROT 2DUP R+ C- BOARD c@ 3 ROLL + -ROT R- C+ BOARD c@ + ;
+: RABSORB DUP -1 = SWAP DUP ROWS BOARD @  = OR IF FALSE ELSE TRUE THEN ; ( -- if i = -1 or N produce logical false -- )
+: CABSORB SWAP DUP -1 = SWAP DUP COLUMNS BOARD @ = OR IF SWAP FALSE ELSE SWAP TRUE THEN ; ( -- if j = -1 or M produce logical false -- )
+: WRAP ( j i -- 1/0) RWRAP CWRAP BOARD c@ ; ( -- performs the wrapping for periodic boundaries -- )
+: ABSORB ( j i -- 1/0 ) RABSORB CABSORB AND IF BOARD c@ ELSE 2DROP 0 THEN ; ( -- absorbing case - if the logical true of Rabsorb and Cabsorb results in the board value else 0 )
+: B@ ( j i  -- 1/0 ) BOUNDARIES 0 = IF WRAP ELSE ABSORB ; ( -- uses boundaries variable to check if absorbing or wrapping boundaries are set - if this is ineffecient, could simply replace with the word wrap or absorb dependent on usage )
+: R+ 1 + ;
+: R- 1 - ;
+: C+ SWAP 1 + SWAP ;
+: C- SWAP 1 + SWAP ;
+: B@ ( i j -- 1/0 ) 2DUP 0 > IF BOARD c@ ELSE 0 THEN ;
+: COUNTIJ ( j i -- count ) 0 -ROT 2DUP R+ B@ 3 ROLL + -ROT 2DUP R- B@ 3 ROLL + -ROT 2DUP C+ B@ 3 ROLL + -ROT 2DUP C- B@ 3 ROLL + -ROT 2DUP R+ C+ B@ 3 ROLL + -ROT 2DUP R- C- B@ 3 ROLL + -ROT 2DUP R+ C- B@ 3 ROLL + -ROT R- C+ B@ + ; ( -- Implementing new B@ word -- )
 : UPDATECOUNTBOARD ROWS COUNTBOARD @ 0 DO COLUMNS COUNTBOARD @ 0 DO I J COUNTIJ I J COUNTBOARD c! LOOP LOOP ;
 
 ( -- Updating Life Board -- )
