@@ -22,7 +22,7 @@ VARIABLE N
 200 N !
 M @ N @ ARRAY BOARD ( -- This is our main matrix -- )
 M @ N @ ARRAY COUNTBOARD ( -- This is our counting matrix -- )
-2 ARRAY LIVERUELS
+2 ARRAY LIVERULES
 1 ARRAY BORNRULES
 
 
@@ -35,12 +35,11 @@ M @ N @ ARRAY COUNTBOARD ( -- This is our counting matrix -- )
 : CABSORB SWAP DUP -1 = SWAP DUP COLUMNS BOARD @ = OR IF SWAP FALSE ELSE SWAP TRUE THEN ; ( -- if j = -1 or M produce logical false -- )
 : WRAP ( j i -- 1/0) RWRAP CWRAP BOARD c@ ; ( -- performs the wrapping for periodic boundaries -- )
 : ABSORB ( j i -- 1/0 ) RABSORB CABSORB AND IF BOARD c@ ELSE 2DROP 0 THEN ; ( -- absorbing case - if the logical true of Rabsorb and Cabsorb results in the board value else 0 )
-: B@ ( j i  -- 1/0 ) BOUNDARIES 0 = IF WRAP ELSE ABSORB ; ( -- uses boundaries variable to check if absorbing or wrapping boundaries are set - if this is ineffecient, could simply replace with the word wrap or absorb dependent on usage )
+: B@ ( j i  -- 1/0 ) BOUNDARIES 0 = IF WRAP ELSE ABSORB THEN ; ( -- uses boundaries variable to check if absorbing or wrapping boundaries are set - if this is ineffecient, could simply replace with the word wrap or absorb dependent on usage )
 : R+ 1 + ;
 : R- 1 - ;
 : C+ SWAP 1 + SWAP ;
-: C- SWAP 1 + SWAP ;
-: B@ ( i j -- 1/0 ) 2DUP 0 > IF BOARD c@ ELSE 0 THEN ;
+: C- SWAP 1 - SWAP ;
 : COUNTIJ ( j i -- count ) 0 -ROT 2DUP R+ B@ 3 ROLL + -ROT 2DUP R- B@ 3 ROLL + -ROT 2DUP C+ B@ 3 ROLL + -ROT 2DUP C- B@ 3 ROLL + -ROT 2DUP R+ C+ B@ 3 ROLL + -ROT 2DUP R- C- B@ 3 ROLL + -ROT 2DUP R+ C- B@ 3 ROLL + -ROT R- C+ B@ + ; ( -- Implementing new B@ word -- )
 : UPDATECOUNTBOARD ROWS COUNTBOARD @ 0 DO COLUMNS COUNTBOARD @ 0 DO I J COUNTIJ I J COUNTBOARD c! LOOP LOOP ;
 
@@ -48,13 +47,15 @@ M @ N @ ARRAY COUNTBOARD ( -- This is our counting matrix -- )
 
 : BORN? FALSE SWAP LEN BORNRULES @ 0 DO DUP I BORNRULES c@ = IF SWAP DROP TRUE SWAP THEN LOOP DROP ; ( -- Potentially inefficent implementation, but I need to figure out how to break out of do loops -- )
 : LIVE? FALSE SWAP LEN LIVERULES @ 0 DO DUP I LIVERULES c@ = IF SWAP DROP TRUE SWAP THEN LOOP DROP ;
-: livedie? 1 = IF LIVE? IF 1 ELSE 0 THEN ELSE BORN? IF 1 ELSE 0 THEN THEN ;
-: UPDATEBOARD ROWS BOARD @ 0 DO COLUMNS BOARD @ 0 I J COUNTBOARD c@ I J BOARD c@ LIVEDIE? I J BOARD c! LOOP LOOP ;
+: LIVEDIE? 1 = IF LIVE? IF 1 ELSE 0 THEN ELSE BORN? IF 1 ELSE 0 THEN THEN ;
+: UPDATEBOARD ROWS BOARD @ 0 DO COLUMNS BOARD @ 0 DO I J COUNTBOARD c@ I J BOARD c@ LIVEDIE? I J BOARD c! LOOP LOOP ;
 
 : UPDATE UPDATECOUNTBOARD UPDATEBOARD ;
 
 ( -- There are possible ineffencies in looping through both the count board and loop board 2 times but I can't figure out how else to do it, possibly generate an update list containing only the index pairs of the updated elements -- )
 
+( -- DEBUGGING COMMANDS -- )
+: SMALLDISPLAY ." MAIN BOARD " 10 0 DO CR 10 0 DO I J BOARD c@ . LOOP LOOP CR CR ." COUNT BOARD" 10 0 DO CR 10 0 DO I J COUNTBOARD c@ . LOOP LOOP ; ( -- Just a little command to see the behaviour of a small section of the board -- )
 
 
 
