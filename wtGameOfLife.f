@@ -1,3 +1,7 @@
+( -- INCLUDING OPTIONS -- )
+INCLUDING-OPTION C:\ForthInc-Evaluation\SWIFTFORTH\LIB\OPTIONS\` rnd.f
+
+
 ( -- MATRIX STYLE UTILISING ALLOT -- )
 : ARRAY ( n/mn--- ) DEPTH 1 = IF 1 THEN CREATE 2DUP , , * DUP HERE SWAP 0 FILL ALLOT DOES> ( j i addr -- addr-i,j ) DUP @ 1 = IF 0 SWAP THEN CELL+ DUP @ ROT * + + CELL+ ; ( -- EXTENDING MATRIX DEFINITION TO ALLOW FOR 1D ARRAYS -- )
 : ROWS -2 CELLS 0 ;
@@ -24,6 +28,16 @@ M @ N @ ARRAY BOARD ( -- This is our main matrix -- )
 M @ N @ ARRAY COUNTBOARD ( -- This is our counting matrix -- )
 2 ARRAY LIVERULES
 1 ARRAY BORNRULES
+
+
+( -- STATISTICS -- )
+VARIABLE GEN
+0 GEN !
+: G+ GEN @ 1+ GEN ! ;
+
+
+( -- RULESET -- )
+: B3L23 3 0 BORNULES c! 2 0 LIVERULES c! 3 1 LIVERULES c! ;
 
 
 ( -- UPDATING -- )
@@ -54,8 +68,28 @@ M @ N @ ARRAY COUNTBOARD ( -- This is our counting matrix -- )
 
 ( -- There are possible ineffencies in looping through both the count board and loop board 2 times but I can't figure out how else to do it, possibly generate an update list containing only the index pairs of the updated elements -- )
 
+
+( -- DISPLAY CODE -- )
+: ASCIIDISPLAY CR ." GENERATION: " GEN @ . CR ROWS BOARD @ 0 DO CR COLUMNS BOARD @ 0 DO I J BOARD c@ 1 = IF ." *" ELSE ."  " THEN LOOP LOOP ;
+: DISPLAY ASCIIDISPLAY ;
+
+
+( -- SEEDS -- )
+
+: RANDOMSEED ROWS BOARD @ 0 DO COLUMNS BOARD @ 0 DO 2 RND I J BOARD c! LOOP LOOP ;
+
+
+
+( -- LIFE -- )
+
+
+: SETUP B3L23 ;
+: LIFE 0 SETUP DO DISPLAY UPDATE G+ LOOP :
+
+
 ( -- DEBUGGING COMMANDS -- )
 : SMALLDISPLAY ." MAIN BOARD " 10 0 DO CR 10 0 DO I J BOARD c@ . LOOP LOOP CR CR ." COUNT BOARD" 10 0 DO CR 10 0 DO I J COUNTBOARD c@ . LOOP LOOP ; ( -- Just a little command to see the behaviour of a small section of the board -- )
+: CLEAR ROWS BOARD @ 0 DO COLUMNS BOARD @ 0 DO 0 I J BOARD c! 0 I J COUNTBOARD c! LOOP LOOP ;
 
 
 
