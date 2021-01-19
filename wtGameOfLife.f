@@ -45,9 +45,9 @@ VARIABLE GEN
 0 CONSTANT BOUNDARIES  ( -- 0 for periodic, 1 for absorbing -- )
 : CWRAP SWAP DUP 0 < IF COLUMNS BOARD @ + ELSE COLUMNS BOARD @ MOD THEN SWAP ;
 : RWRAP DUP 0 < IF ROWS BOARD @ + ELSE ROWS BOARD @ MOD THEN ;
-: RABSORB DUP -1 = SWAP DUP ROWS BOARD @  = OR IF FALSE ELSE TRUE THEN ; ( -- if i = -1 or N produce logical false -- )
-: CABSORB SWAP DUP -1 = SWAP DUP COLUMNS BOARD @ = OR IF SWAP FALSE ELSE SWAP TRUE THEN ; ( -- if j = -1 or M produce logical false -- )
-: WRAP ( j i -- 1/0) RWRAP CWRAP BOARD c@ ; ( -- performs the wrapping for periodic boundaries -- )
+: RABSORB DUP -1 = SWAP DUP ROWS BOARD @  = OR IF FALSE ELSE TRUE THEN ;
+: CABSORB SWAP DUP -1 = SWAP DUP COLUMNS BOARD @ = OR IF SWAP FALSE ELSE SWAP TRUE THEN ;
+: WRAP ( j i -- 1/0) RWRAP CWRAP BOARD c@ ;
 : ABSORB ( j i -- 1/0 ) RABSORB CABSORB AND IF BOARD c@ ELSE 2DROP 0 THEN ; 
 : B@ ( j i  -- 1/0 ) BOUNDARIES 0 = IF WRAP ELSE ABSORB THEN ;
 : R+ 1 + ;
@@ -66,9 +66,6 @@ VARIABLE GEN
 
 : UPDATE UPDATECOUNTBOARD UPDATEBOARD ;
 
-( -- There are possible ineffencies in looping through both the count board and loop board 2 times but I can't figure out how else to do it, possibly generate an update list containing only the index pairs of the updated elements -- )
-
-
 ( -- DISPLAY CODE -- )
 : ASCIIDISPLAY CR ." GENERATION: " GEN @ . CR ROWS BOARD @ 0 DO CR COLUMNS BOARD @ 0 DO I J BOARD c@ 1 = IF ." *" ELSE ."  " THEN LOOP LOOP ;
 
@@ -79,6 +76,14 @@ VARIABLE GEN
 : DISPLAYSETUP BMPSETUP ;
 : DISPLAY ASCIIDISPLAY ;
 
+
+( -- FILE I/O -- )
+VARIABLE FILE-ID
+
+: WRITEBOARD ROWS BOARD @ 0 DO s" " PAD PLACE COLUMNS BOARD @ 0 DO I J BOARD c@ 1 = IF s" *" PAD APPEND ELSE s"  " PAD APPEND THEN LOOP PAD COUNT FILE-ID @ WRITE-LINE DROP LOOP ;
+: WRITE-INITIAL-STATE s" C:\ForthInc-Evaluation\Projects\Game of Life\Initial-State.dat" r/w CREATE-FILE DROP FILE-ID ! WRITEBOARD FILE-ID ! CLOSE-FILE DROP ;
+: WRITE-INITIAL-STATE s" C:\ForthInc-Evaluation\Projects\Game of Life\Final-State.dat" r/w CREATE-FILE DROP FILE-ID ! WRITEBOARD FILE-ID ! CLOSE-FILE DROP ;
+: READBOARD s" C:\ForthInc-Evaluation\Projects\Game of Life\Initial-State.dat" r/w OPEN-FILE DROP FILE-ID ! FILE-ID @ FILE-SIZE 2DROP 0 0 -ROT DO PAD 1 FILE-ID @ READ-FILE 2DROP PAD COUNT SWAP DROP CASE 42 OF 1 OVER 0 BOARD c! 1+ ENDOF 32 OF 0 OVER 0 BOARD c! 1+ ENDOF ENDCASE LOOP ;
 
 ( -- SEEDS -- )
 
@@ -94,7 +99,7 @@ VARIABLE GEN
 
 
 ( -- DEBUGGING COMMANDS -- )
-: SMALLDISPLAY ." MAIN BOARD " 10 0 DO CR 10 0 DO I J BOARD c@ . LOOP LOOP CR CR ." COUNT BOARD" 10 0 DO CR 10 0 DO I J COUNTBOARD c@ . LOOP LOOP ; ( -- Just a little command to see the behaviour of a small section of the board -- )
+: SMALLDISPLAY ." MAIN BOARD " 10 0 DO CR 10 0 DO I J BOARD c@ . LOOP LOOP CR CR ." COUNT BOARD" 10 0 DO CR 10 0 DO I J COUNTBOARD c@ . LOOP LOOP ;
 : CLEAR ROWS BOARD @ 0 DO COLUMNS BOARD @ 0 DO 0 I J BOARD c! 0 I J COUNTBOARD c! LOOP LOOP ;
 
 
