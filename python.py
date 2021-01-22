@@ -33,3 +33,16 @@ im = plt.imshow(matrix_array[9], cmap=cmap, norm=norm, animated=True)
 
 
 plt.show()
+
+def period(list_arrays):
+    repeat = False
+    for i in range(len(list_arrays)):
+        for j in range(i):
+            if sp.array_equal(list_arrays[i], list_arrays[j]) == True:
+                period = i - j
+                generation_oscillating = j -1 
+                repeat = True
+                break
+        if repeat == True:
+            break
+    return period, generation_oscillating
