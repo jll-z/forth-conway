@@ -1,6 +1,6 @@
 ( -- INCLUDING OPTIONS -- )
 INCLUDING-OPTION C:\ForthInc-Evaluation\SWIFTFORTH\LIB\OPTIONS\` rnd.f
-INCLUDING-OPTION C:\ForthInc-Evaluation\Projects\GameofLife\` bmpCode.f ( -- This code I shall include in the git -- )
+INCLUDING-OPTION C:\ForthInc-Evaluation\Projects\Game of Life\` bmpCode.f ( -- This code I shall include in the git -- )
 
 ( -- MATRIX STYLE UTILISING ALLOT -- )
 : ARRAY ( n/mn--- ) DEPTH 1 = IF 1 THEN CREATE 2DUP , , * DUP HERE SWAP 0 FILL ALLOT DOES> ( j i addr -- addr-i,j ) DUP @ 1 = IF 0 SWAP THEN CELL+ DUP @ ROT * + + CELL+ ; ( -- EXTENDING MATRIX DEFINITION TO ALLOW FOR 1D ARRAYS -- )
@@ -22,8 +22,8 @@ INCLUDING-OPTION C:\ForthInc-Evaluation\Projects\GameofLife\` bmpCode.f ( -- Thi
 VARIABLE M
 VARIABLE N
 
-200 M !
-200 N !
+16 M !
+16 N !
 M @ N @ ARRAY BOARD ( -- This is our main matrix -- )
 M @ N @ ARRAY COUNTBOARD ( -- This is our counting matrix -- )
 2 ARRAY LIVERULES
@@ -69,12 +69,12 @@ VARIABLE GEN
 ( -- DISPLAY CODE -- )
 : ASCIIDISPLAY CR ." GENERATION: " GEN @ . CR ROWS BOARD @ 0 DO CR COLUMNS BOARD @ 0 DO I J BOARD c@ 1 = IF ." *" ELSE ."  " THEN LOOP LOOP ;
 
-: TRANSLATEBMP DUP DUP 2 + @ + SWAP 54 + 0 -ROT DO DUP 0 BOARD c@ 0 = if 255 255 255 ELSE 000 000 000 THEN I TUCK c! 1+ TUCK c! 1+ c! 1 + 3 +LOOP DROP ;
+: TRANSLATEBMP DUP DUP 2 + @ + SWAP 54 + 0 ROWS BOARD @ 1 - 3 ROLL 3 ROLL DO 2DUP BOARD c@ 0 = if 255 255 255 ELSE 000 000 000 THEN I TUCK c! 1+ TUCK c! 1+ c! SWAP DUP COLUMNS BOARD @ 1 - = IF DROP 0 SWAP 1 - ELSE 1 + SWAP THEN 3 +LOOP 2DROP ;
 : BMPDISPLAY bmp-address @ TRANSLATEBMP bmp-address @ bmp-to-screen-stretch ;
 : BMPSETUP M @ bmp-x-size ! N @ bmp-y-size ! Setup-Test-Memory New-bmp-Window-stretch bmp-window-handle ! ;
 
 : DISPLAYSETUP BMPSETUP ;
-: DISPLAY ASCIIDISPLAY ;
+: DISPLAY BMPDISPLAY ;
 
 
 ( -- FILE I/O -- )
@@ -82,13 +82,13 @@ VARIABLE FILE-ID
 
 : WRITEBOARD ROWS BOARD @ 0 DO s" " PAD PLACE COLUMNS BOARD @ 0 DO I J BOARD c@ 1 = IF s" *" PAD APPEND ELSE s"  " PAD APPEND THEN LOOP PAD COUNT FILE-ID @ WRITE-LINE DROP LOOP ;
 : WRITE-INITIAL-STATE s" C:\ForthInc-Evaluation\Projects\Game of Life\Initial-State.dat" r/w CREATE-FILE DROP FILE-ID ! WRITEBOARD FILE-ID ! CLOSE-FILE DROP ;
-: WRITE-INITIAL-STATE s" C:\ForthInc-Evaluation\Projects\Game of Life\Final-State.dat" r/w CREATE-FILE DROP FILE-ID ! WRITEBOARD FILE-ID ! CLOSE-FILE DROP ;
+: WRITE-FINAL-STATE s" C:\ForthInc-Evaluation\Projects\Game of Life\Final-State.dat" r/w CREATE-FILE DROP FILE-ID ! WRITEBOARD FILE-ID ! CLOSE-FILE DROP ;
 : READBOARD s" C:\ForthInc-Evaluation\Projects\Game of Life\Initial-State.dat" r/w OPEN-FILE DROP FILE-ID ! FILE-ID @ FILE-SIZE 2DROP 0 0 -ROT DO PAD 1 FILE-ID @ READ-FILE 2DROP PAD COUNT SWAP DROP CASE 42 OF 1 OVER 0 BOARD c! 1+ ENDOF 32 OF 0 OVER 0 BOARD c! 1+ ENDOF ENDCASE LOOP ;
 
 ( -- SEEDS -- )
 
 : RANDOMSEED ROWS BOARD @ 0 DO COLUMNS BOARD @ 0 DO 2 RND I J BOARD c! LOOP LOOP ;
-
+: GLIDER 1 1 4 BOARD c! 1 2 4 BOARD c! 1 3 4 BOARD c! 1 3 3 BOARD c! 1 2 2 BOARD c! ;
 
 
 ( -- LIFE -- )
@@ -99,8 +99,11 @@ VARIABLE FILE-ID
 
 
 ( -- DEBUGGING COMMANDS -- )
-: SMALLDISPLAY ." MAIN BOARD " 10 0 DO CR 10 0 DO I J BOARD c@ . LOOP LOOP CR CR ." COUNT BOARD" 10 0 DO CR 10 0 DO I J COUNTBOARD c@ . LOOP LOOP ;
+: SMALLDISPLAY ." MAIN BOARD " 10 ROWS BOARD @ MIN 0 DO CR 10 COLUMNS BOARD @ MIN 0 DO I J BOARD c@ . LOOP LOOP CR CR ." COUNT BOARD" 10 0 DO CR 10 0 DO I J COUNTBOARD c@ . LOOP LOOP ;
 : CLEAR ROWS BOARD @ 0 DO COLUMNS BOARD @ 0 DO 0 I J BOARD c! 0 I J COUNTBOARD c! LOOP LOOP ;
+
+
+
 
 
 
