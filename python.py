@@ -20,6 +20,7 @@ for i in range(len(lines)):
         matrix_array = sp.concatenate((matrix_array, [line.reshape(rows, cols)]))
         
 
+# Run this code if you only want to see one generation still
 fig, ax = plt.subplots()
 cmap = colors.ListedColormap(['white', 'black'])
 bounds = [0,1, 2]
@@ -30,6 +31,28 @@ ax.set_yticks(sp.arange(-0.5,rows, 1));
 ax.set_yticklabels([])
 ax.set_xticklabels([])
 im = plt.imshow(matrix_array[9], cmap=cmap, norm=norm, animated=True)
+
+
+plt.show()
+
+# Run this code to show animation
+import matplotlib.animation as animation
+fig, ax = plt.subplots()
+cmap = colors.ListedColormap(['white', 'black'])
+bounds = [0,1, 2]
+norm = colors.BoundaryNorm(bounds, cmap.N)
+#ax.grid(which='major', axis='both', linestyle='-', color='k', linewidth=2)
+ax.set_xticks(sp.arange(-0.5, cols, 1));
+ax.set_yticks(sp.arange(-0.5,rows, 1));
+ax.set_yticklabels([])
+ax.set_xticklabels([])
+ims =[]
+for i in range(iterations):
+    im = plt.imshow(matrix_array[i], cmap=cmap, norm=norm, animated=True)
+    ims.append([im])
+    
+ani = animation.ArtistAnimation(fig, ims, interval=50, blit=True, repeat_delay = 1000)
+
 
 
 plt.show()
