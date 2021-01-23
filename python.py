@@ -69,3 +69,45 @@ def period(list_arrays):
         if repeat == True:
             break
     return period, generation_oscillating
+
+
+""" Find velocity of glider using a 3d input matrix """
+def find_velocity(input_matrix, glider, start_iteration, end_iteration):
+    shape = len(glider)
+    test_matrix = sp.zeros((shape, shape))
+    x_pos = []
+    y_pos = []
+    count = 0
+    generation = []
+    for i in range(start_iteration, end_iteration):
+        for j in range(int(shape/2), row - int(shape/2)):
+            for k in range(int(shape/2), col - int(shape/2)):
+                test_matrix = input_matrix[j-int(shape/2): j + int(shape/2), k-int(shape/2): k+int(shape/2)]
+                if sp.array_equal(test_matrix, glider) == True:
+                    count += 1
+                    x_pos.append(j)
+                    y_pos.append(k)
+                    generation.append(i)
+                    break
+            break
+        if count == 2:
+            break
+    time = generation[1] - generation[0]
+    x_speed = (x_pos[1]-x_pos[0])/time
+    y_speed = (y_pos[1] - y_pos[0])/time
+    return x_speed, y_speed
+
+""" Find the number of known patterns using one generation of life board """
+def count_known_pattern(matrix_array, input_element):
+    count = 0
+    shape = len(input_element)
+    for i in range(int(shape/2), row - int(shape/2)):
+        for j in range(int(shape/2), col - int(shape/2)):
+            test_matrix = matrix_array[i-int(shape/2): i+int(shape/2), j-int(shape/2): j+int(shape/2)]
+            if sp.array_equal(input_element, test_matrix) == True:
+                count += 1
+    return count
+    
+
+
+        
