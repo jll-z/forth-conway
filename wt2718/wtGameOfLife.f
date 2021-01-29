@@ -1,10 +1,5 @@
 ( -- INCLUDING OPTIONS -- )
-INCLUDING-OPTION C:\ForthInc-Evaluation\SWIFTFORTH\LIB\OPTIONS\` rnd.f
 INCLUDING-OPTION C:\ForthInc-Evaluation\Projects\Game of Life\` bmpCode.f ( -- This code I shall include in the git -- )
-
-( -- BMP CODE -- )
-
-: default-bmp-path ( -- addr n )  s" c:\temp\bmp_output_0001.bmp"  ;
 
 
 ( -- MATRIX STYLE UTILISING ALLOT -- )
