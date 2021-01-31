@@ -12,7 +12,8 @@ Running Conway Game of Life
 
 Conways game of life can be run by typing the run_conway word into the Forth terminal after ecexuting 
 all the relevant files. Should a temperature parameter be included, this can be run using the run_conway_with_temperature word. More information on the temperature methods can be found below. The simulation can be run immediately using default settings but these variables
-can be easily changed using the methods below. 
+can be easily changed using the methods below. The default is to run with a randomly filled array but this can be changed using he methods below or by
+manually inputting aray items using the array_! word. (e.g. to place a live cell in the position (3,2) we would input matrix 1 3 2 array_! )
 
 Note that the file paths of the externally referenced files bmp-diplay-2 and Teperature-Script will likely
 need to be changed to the paths of the files on the users computer. This can be done on lines 321 (visual output)
@@ -57,3 +58,25 @@ indeterminiitic rules to Conway's Game of Life. This is used to in our investiga
 Physics quanitities in the Game of Life. There is also a word go_with_temperature which can be optionally used
 to run the code with the temperature element.The temperaure of the system is by default set to 0 but can be changed
 on line 2.
+
+The temperature can also be input as a float, this requires changing the scaling fouund on line 3. 
+
+Life Board Seeds
+
+There are a few seeds which can be initialised immediately. 
+
+1. Horizontal_row
+This creates a horizontal row at the centre of the life-board, this is input as 
+
+length of life horizontal_row
+
+2. fill_50
+This creates a randomly filled sees which is 50-50 alive and dead, input us
+
+fill_50
+
+3. fill_percentage
+
+This creates a randomly filled seeds which are the defined percentage alive, input as
+
+(percentage) fill_percentage
