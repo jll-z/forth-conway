@@ -6,12 +6,12 @@ The script contains 3 files in order to run Conway's Game of Life
 2. Temperature-Script.f
 3. bmp-display-2.f
 
-All scripts must be downloaded for the running but the 
+
 
 Running Conway Game of Life
 
 Conways game of life can be run by typing the run_conway word into the Forth terminal after ecexuting 
-all the relevant files. The simulation can be run immediately using default settings but these variables
+all the relevant files. Should a temperature parameter be included, this can be run using the run_conway_with_temperature word. More information on the temperature methods can be found below. The simulation can be run immediately using default settings but these variables
 can be easily changed using the methods below. 
 
 Note that the file paths of the externally referenced files bmp-diplay-2 and Teperature-Script will likely
