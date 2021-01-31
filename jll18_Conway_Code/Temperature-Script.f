@@ -1,16 +1,20 @@
 
-0 constant temperature { Define the temperature of system }
-variable count_alive 
-row_small col_small * constant size 
-variable count_success 
+0 constant temperature                                          { Define the temperature of system }
+1 constant scale                                               { This converts floating point temp into integer for forth}
+                                                                { for example temp 0.5 would input 5 into temperature}
+                                                                { and 10 into the scale }
+variable count_alive                                            { Number of Live Cells defined at beginning of run }
+row_small col_small * constant size                             { Size of the array }
+variable count_success                                          { Variable used to store data for test }
 variable conway-file-id-3
-100000 constant iterations_prob
-10 constant N
+100000 constant iterations_prob                                 { Iterations for binomial test }
+10 constant N                                                   { Number of samples for binomial test }
+
 
 
 : calculate_prob ( p0 --> )                                     { Rejection method algorithm based on initial life rules }
-    size * count_alive @ temperature * + 
-    1 temperature + 
+    size * scale * count_alive @ temperature * + 
+    1 scale * temperature + 
     size * rnd 
     > if
         1
@@ -54,12 +58,14 @@ variable conway-file-id-3
         matrix remove_BC
         life_board write-matrix
         write-blank
-        matrix count_statistics swap >r
-        verbose 1 = if
-            r@ . ." Number of Live Cells " cr
-            . ." Number of Dead Cells " cr
-        then r> drop
+        matrix count_statistics swap dup
         count_alive !
+        verbose 1 = if
+            . ." Number of Live Cells " cr
+            . ." Number of Dead Cells " cr
+        else
+            drop drop
+        then 
         visualisation 1 = if
             go_visual
         then
@@ -69,12 +75,14 @@ variable conway-file-id-3
         else
             new_matrix no_wrap
         then
-        new_matrix matrix change_statistics dup >r
-        (.) conway-file-id-2 @ write-line drop
+        new_matrix matrix change_statistics dup 
+        (.) conway-file-id-2 @ write-line drop 
         1 verbose = if
-            r@ . ." Change in live cells " cr
             . ." Change in dead cells " cr
-        then r> drop drop
+            . ." Change in live cells " cr
+        else
+            drop drop
+        then 
         boundary_checking 1 = if
             check_edges_alive
             true = if
@@ -90,7 +98,7 @@ variable conway-file-id-3
 { ---------------------------- Validations of the temperature methods -------------------}
 
 : make-binomial-file
-    s" C:\Users\Joe\Documents\Binomial.txt " r/w create-file drop
+    s" C:\Users\Joe\Binomial.txt " r/w create-file drop
     conway-file-id-3 !
     ;
 
@@ -129,4 +137,6 @@ variable conway-file-id-3
 
 
         
+
+
 
