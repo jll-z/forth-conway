@@ -10,6 +10,10 @@ To run wtGameOfLife.f ensure you have the file paths configured correctly for th
 
 When you load wtGameOfLife.f into a SwiftForth terminal (using the Include) it will come up with N and Line are not unique. I think I am overwritting some old definition of those words, but I am not completely sure. Regardless, the code will run perfectly.
 
+The grid size is determined by the variable M and N. These can be edited in the code.
+
+The constant BOUNDARIES determines whether the boundaries and absorbing or periodic, 1 for absorbing, 0 for periodic
+
 To observe the game of life, choose a seed from the seed section and enter it into the terminal. This will initalise the board with the seed.
 Then run n LIFE, where n is the integer number of generations. This will automatically run the game of Life for those generations, printing the generation number to the terminal.
 
