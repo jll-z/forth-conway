@@ -1,7 +1,7 @@
 { ----------- Insert variables here -------- }
 
-142 constant row                                          { Number of rows+2 }
-142 constant col                                          { Number of columns+2 }
+14 constant row                                          { Number of rows+2 }
+14 constant col                                          { Number of columns+2 }
 col 2 - constant col_small                               { Define number of rows and columns }
 row 2 - constant row_small
 row_small col_small * constant size                      { Size of the life board }
@@ -343,11 +343,11 @@ INCLUDING-OPTION C:\Users\Joe\Documents\Forth\Forth_Project` bmp-display-2.f
 
 { -------------------------------------------------------- Running Conway ---------------------------------------------------- }
 
-1500 constant iterations                                                  { Number of iterations }
+200 constant iterations                                                  { Number of iterations }
 0 constant wrap                                                          { 0 for non wrapping and 1 for wrapping boundaries }
 0 constant boundary_checking                                             { 1 to check is cells are alive in boundaries }
-0 constant visualisation                                                 { 1 for visualisation 0 for none }
-0 constant verbose                                                       { 1 to show statistics 0 for none }
+1 constant visualisation                                                 { 1 for visualisation 0 for none }
+1 constant verbose                                                       { 1 to show statistics 0 for none }
 
 row col make_array constant matrix
 row col make_array constant new_matrix
@@ -412,7 +412,7 @@ new_matrix fill_0
     new_matrix fill_0
 ;
 
-60 fill_percentage
+fill_50
 
 
 
