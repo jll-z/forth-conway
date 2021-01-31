@@ -412,7 +412,6 @@ new_matrix fill_0
     new_matrix fill_0
 ;
 
-fill_50
 
 
 
@@ -480,7 +479,10 @@ fill_50
 
 INCLUDING-OPTION C:\Users\Joe\Documents\Forth\Forth_Project` Temperature-Script.f 
 
+{ ---------------------------------------------------- Demonstration Routine --------------------------------- }
 
+fill_50
+run_conway
 
 
 
