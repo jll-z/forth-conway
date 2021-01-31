@@ -1,5 +1,3 @@
-
-
 { ----------- Insert variables here -------- }
 
 142 constant row                                          { Number of rows+2 }
@@ -376,14 +374,14 @@ new_matrix fill_0
         matrix -rot I array_!
     loop ;
 
-: fill_50                                                                 { Fill with 50-50 random }
+: fill_50                                                                   { Fill with 50-50 random }
     Begin 
         matrix fill_rnd
         matrix count_statistics
         =
      until ;
 
-: fill_percentage ( perc --> )                                           { Fill a percentage of the initial matrix with random live cells }
+: fill_percentage ( perc --> )                                              { Fill a percentage of the initial matrix with random live cells }
     fill_50
     dup 50 - 
     0 > if
@@ -414,7 +412,7 @@ new_matrix fill_0
     new_matrix fill_0
 ;
 
-fill_50
+60 fill_percentage
 
 
 
@@ -455,12 +453,14 @@ fill_50
         else
             matrix no_wrap
         then 
-        new_matrix matrix change_statistics dup >r
-        (.) conway-file-id-2 @ write-line drop >r
+        new_matrix matrix change_statistics dup 
+        (.) conway-file-id-2 @ write-line drop 
         verbose 1 = if
-            r@ . ." Change in dead cells " cr 
-            r@ . ." Change in live cells " cr 
-        then r> r> drop drop
+            . ." Change in dead cells " cr 
+            . ." Change in live cells " cr 
+        else
+            drop drop
+        then 
         boundary_checking 1 = if
             check_edges_alive
             true = if
@@ -479,6 +479,10 @@ fill_50
 
 
 INCLUDING-OPTION C:\Users\Joe\Documents\Forth\Forth_Project` Temperature-Script.f 
+
+
+
+
 
 
 
