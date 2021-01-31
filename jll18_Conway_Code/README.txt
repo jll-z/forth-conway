@@ -1,4 +1,4 @@
-{ ------------------------------------ Conway Game of Life v2 README ------------------------------ }
+{ ------------------------------------ Conway Game of Life jll18 README ------------------------------ }
 
 The script contains 3 files in order to run Conway's Game of Life
 
@@ -11,9 +11,11 @@ The script contains 3 files in order to run Conway's Game of Life
 Running Conway Game of Life
 
 Conways game of life can be run by typing the run_conway word into the Forth terminal after ecexuting 
-all the relevant files. Should a temperature parameter be included, this can be run using the run_conway_with_temperature word. More information on the temperature methods can be found below. The simulation can be run immediately using default settings but these variables
+all the relevant files. Should a temperature parameter be included, this can be run using the run_conway_with_temperature word.
+More information on the temperature methods can be found below. The simulation can be run immediately using default settings but these variables
 can be easily changed using the methods below. The default is to run with a randomly filled array but this can be changed using he methods below or by
-manually inputting aray items using the array_! word. (e.g. to place a live cell in the position (3,2) we would input matrix 1 3 2 array_! )
+manually inputting aray items using the array_! word. (e.g. to place a live cell in the position (3,2) we would input matrix 1 3 2 array_! ). Before inputing new 
+cells, it is advisable to use the word reset to clear the array first
 
 Note that the file paths of the externally referenced files bmp-diplay-2 and Teperature-Script will likely
 need to be changed to the paths of the files on the users computer. This can be done on lines 321 (visual output)
